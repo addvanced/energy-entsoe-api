@@ -1,7 +1,7 @@
 plugins {
-	id 'org.springframework.boot' version '2.7.1'
-	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
-	id 'org.unbroken-dome.xjc' version '2.0.0'
+	id 'org.springframework.boot' version '2.7.3'
+	id 'io.spring.dependency-management' version '1.0.13.RELEASE'
+	id 'com.github.edeandrea.xjc-generation' version "1.6"
 	id 'java'
 }
 
@@ -10,8 +10,15 @@ version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '17'
 
 configurations {
+	all {
+		resolutionStrategy.cacheChangingModulesFor 5, 'minutes'
+	}
 	compileOnly {
 		extendsFrom annotationProcessor
+
+		// Use Undertow instead of Tomcat
+		exclude module: "spring-boot-starter-tomcat"
+		exclude module: "undertow-websockets-jsr"
 	}
 }
 
@@ -20,16 +27,22 @@ jar.enabled(false)
 repositories {
 	mavenCentral()
 }
-
+ext {
+	jaxbVersion = '2.3.1'
+}
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-undertow'
 	implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml'
 
-	implementation 'javax.xml.bind:jaxb-api:2.3.1'
-	implementation 'com.sun.xml.bind:jaxb-xjc:2.3.1'
-	implementation 'com.sun.xml.bind:jaxb-impl:2.3.1'
-	implementation 'org.glassfish.jaxb:jaxb-runtime:2.3.3'
+	implementation 'javax.activation:activation:1.1'
+	implementation "javax.xml.bind:jaxb-api:$jaxbVersion"
+
+	xjc "javax.xml.bind:jaxb-api:$jaxbVersion"
+	xjc "com.sun.xml.bind:jaxb-xjc:$jaxbVersion"
+	xjc "com.sun.xml.bind:jaxb-impl:$jaxbVersion"
+	xjc 'com.sun.istack:istack-commons-runtime:3.0.11'
 
 	compileOnly 'org.projectlombok:lombok'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
@@ -41,3 +54,26 @@ dependencies {
 tasks.named('test') {
 	useJUnitPlatform()
 }
+
+tasks.withType(JavaCompile) {
+	options.encoding = 'UTF-8'
+}
+
+xjcGeneration {
+	defaultAdditionalXjcOptions = ['encoding': 'UTF-8']
+
+	schemas {
+		EntsoeIEC62325 {
+			schemaRootDir = "$projectDir/src/main/resources/entsoe/xsd"
+			schemaFile = "iec62325-451-3-publication_v7_0.xsd"
+			javaPackageName = 'com.systemedz.entsoe.xsd.iec62325'
+			generatedOutputRootDir = file "$buildDir/generated"
+		}
+	}
+}
+
+compileJava {
+	options.annotationProcessorPath = configurations.annotationProcessor
+}
+
+sourceSets.main.java.srcDir "$buildDir/generated/src/main/java"
