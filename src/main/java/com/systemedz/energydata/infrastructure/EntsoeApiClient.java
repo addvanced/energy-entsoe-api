@@ -1,6 +1,6 @@
 package com.systemedz.energydata.infrastructure;
 
-import com.systemedz.energydata.infrastructure.interfaces.IEntsoeApi;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -11,21 +11,21 @@ import java.util.Iterator;
 import java.util.Map;
 
 @Service
-public class EntsoeApi implements IEntsoeApi {
-    private final static String BASE_URL = "https://transparency.entsoe.eu/api?";
+public class EntsoeApiClient {
+
+    @Value("${entsoe.baseurl}")
+    private String BASE_URL;
 
     private RestTemplate restTemplate;
 
-    public EntsoeApi(RestTemplate restTemplate) {
+    public EntsoeApiClient(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
     }
 
-    @Override
     public String getByPeriodDefinition(Map<String,String> params) {
         return getResultByInterval(params);
     }
 
-    @Override
     public String getLastWeek(Map<String,String> params) {
         var periodEnd = LocalDateTime.now(ZoneId.of("Europe/Copenhagen"));
         var periodStart = periodEnd.minusWeeks(1);
@@ -34,7 +34,6 @@ public class EntsoeApi implements IEntsoeApi {
         return getResultByInterval(params);
     }
 
-    @Override
     public String getLastMonth(Map<String,String> params) {
         var periodEnd = LocalDateTime.now(ZoneId.of("Europe/Copenhagen"));
         var periodStart = periodEnd.minusMonths(1);
@@ -43,7 +42,6 @@ public class EntsoeApi implements IEntsoeApi {
         return getResultByInterval(params);
     }
 
-    @Override
     public String getLastYear(Map<String,String> params) {
         var periodEnd = LocalDateTime.now(ZoneId.of("Europe/Copenhagen"));
         var periodStart = periodEnd.minusYears(1);
@@ -69,7 +67,7 @@ public class EntsoeApi implements IEntsoeApi {
     }
 
     private String addUrlParams(Map<String, String> params) {
-        StringBuilder result = new StringBuilder(BASE_URL);
+        StringBuilder result = new StringBuilder(BASE_URL).append("/");
         Iterator<String> keySet = params.keySet().iterator();
         while (keySet.hasNext()) {
             String key = keySet.next();

@@ -5,8 +5,7 @@ spring:
     banner-mode: off
 
 server:
-  port: 80
+  port: 8080
 
 entsoe:
   baseurl: "https://transparency.entsoe.eu/api"
-  token: 383d7e7b-6948-490f-89ec-e2ba55a205f8
