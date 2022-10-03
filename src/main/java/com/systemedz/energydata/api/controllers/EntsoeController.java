@@ -13,13 +13,13 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/entsoe")
+@RequestMapping
 @AllArgsConstructor
 public class EntsoeController {
 
     private EntsoeService service;
 
-    @GetMapping(value = "/api", produces = { MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
+    @GetMapping(value = "/", produces = { MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<String> getEntsoeData(@RequestParam Map<String, String> params) {
         String apiResponse = service.getEntsoeData(params);
         return Strings.isNotBlank(apiResponse) ? ResponseEntity.ok(apiResponse) : ResponseEntity.noContent().build();

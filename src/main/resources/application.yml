@@ -11,7 +11,7 @@ server:
     key-store-type: pkcs12
     key-alias: entsoe
     key-password: password
-  port: 8443
+  port: 443
 
 entsoe:
   baseurl: "https://transparency.entsoe.eu/api"
