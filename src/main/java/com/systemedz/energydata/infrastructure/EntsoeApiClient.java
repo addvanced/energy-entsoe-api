@@ -67,7 +67,7 @@ public class EntsoeApiClient {
     }
 
     private String addUrlParams(Map<String, String> params) {
-        StringBuilder result = new StringBuilder(BASE_URL).append("/");
+        StringBuilder result = new StringBuilder(BASE_URL).append("?");
         Iterator<String> keySet = params.keySet().iterator();
         while (keySet.hasNext()) {
             String key = keySet.next();
