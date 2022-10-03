@@ -26,6 +26,6 @@ jobs:
           DOCKER_PASSWORD: ${{ secrets.dockerhub_password }}
         run: docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD" docker.io
       - name: Build Docker image with latest tag
-        run: docker build . --file Dockerfile --tag ${{secrets.docker_username}}/${{secrets.repo_name}}:latest
+        run: docker build . --file Dockerfile --tag systemedz/entsoe-service:latest
       - name: Publish Docker image to Docker Hub
-        run: docker push ${{secrets.docker_username}}/${{secrets.repo_name}}:latest
+        run: docker push systemedz/entsoe-service:latest
