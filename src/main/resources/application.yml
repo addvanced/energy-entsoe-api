@@ -5,7 +5,13 @@ spring:
     banner-mode: off
 
 server:
-  port: 80
+  ssl:
+    key-store: classpath:entsoe.p12
+    key-store-password: password
+    key-store-type: pkcs12
+    key-alias: entsoe
+    key-password: password
+  port: 8443
 
 entsoe:
   baseurl: "https://transparency.entsoe.eu/api"
